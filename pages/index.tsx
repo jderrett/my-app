@@ -1,8 +1,37 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import useSWR from 'swr'
+
+const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json())
+
+const getUsers = (uri: string) => {
+  const { data, error } = useSWR(uri, fetcher)
+  return {data, error }
+
+}
+
+const Users = () => {
+  const uri = '/api/users'
+  const {data, error } = getUsers(uri);
+  if (error) return <div>failed to load users {uri}</div>
+  if (!data) return <div>loading...</div>
+  const users: any[] = data.users
+  return (
+    <div>
+      <h2>Users</h2>
+      {users.map((u: any) => {
+        return <p>Name: {u.firstName} {u.lastName + '.'}</p>
+
+      })}
+    </div>
+  )
+
+}
 
 export default function Home() {
+
+
   return (
     <div className={styles.container}>
       <Head>
@@ -12,14 +41,8 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.tsx</code>
-        </p>
+        <Users />
 
         <div className={styles.grid}>
           <a href="https://nextjs.org/docs" className={styles.card}>
