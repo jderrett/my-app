@@ -3,25 +3,27 @@ import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 import useSWR from 'swr'
 
-const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json())
+// const fetcher = (...args: any[]) => fetch(...args).then((res) => res.json())
+const fetcher = (url: URL) => fetch(url).then(r => r.json())
 
-const getUsers = (uri: string) => {
-  const { data, error } = useSWR(uri, fetcher)
-  return {data, error }
+// const getUsers = (uri: string) => {
+//   // const {data, error }= fetch(uri).then(r => r.json())
+//   // const { data, error } = useSWR(uri, fetcher)
+//   return {data, error }
 
-}
+// }
 
 const Users = () => {
-  const uri = '/api/users'
-  const {data, error } = getUsers(uri);
-  if (error) return <div>failed to load users {uri}</div>
+  const apiPath = '/api/users'
+  const {data, error} = useSWR(apiPath, fetcher)
+  if (error) return <div>failed to load users {apiPath}</div>
   if (!data) return <div>loading...</div>
   const users: any[] = data.users
   return (
     <div>
       <h2>Users</h2>
       {users.map((u: any) => {
-        return <p>Name: {u.firstName} {u.lastName + '.'}</p>
+        return <p key={u.id}>Name: {u.firstName} {u.lastName + '.'}</p>
 
       })}
     </div>
