@@ -20,13 +20,11 @@ const Users = () => {
   const {data, error} = useSWR(apiPath, fetcher)
   if (error) return <div>failed to load users {apiPath}</div>
   if (!data) return <div>loading...</div>
-  const users: any[] = data.users
+  const users: UserProps[] = data.users
   return (
     <div>
       <h2>Users</h2>
-      {users.map((u: UserProps) => {
-        return <UserInfo key={u.id} {...u} />
-      })}
+      {users.map(u => <UserInfo key={u.id} {...u} />)}
     </div>
   )
 
